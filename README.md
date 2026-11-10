@@ -1,26 +1,26 @@
-# Contact Request
+# Connect
 
-A one-file iPhone web app (`index.html`) for collecting **name, email and phone** from people you meet while networking. You don't install anything from the App Store, and you don't need a server or an account.
+A minimalist, one-file iPhone web app (`index.html`) for collecting **name, email and phone** from people you meet while networking. Show your QR code; they scan it with their camera and their details come straight to you. You don't need an App Store app, a server or an account.
 
-## Two ways to use it
+## How it works
 
-| Mode | How it works | Where the contact ends up |
-|---|---|---|
-| **Tap / scan** (their phone) | They tap the NFC sticker on your phone case, or scan your QR code. The form opens on *their* phone. | When they submit, a pre-filled text (or email) to you opens. They hit **Send**. They can also save your contact card. |
-| **Hand-over** (your phone) | You hand them your iPhone with the form open. | It's saved on your iPhone. From the ⚙︎ dashboard, tap **Add to Contacts** or export a CSV. |
+- **My code**: your personal QR code, showing your name and headline. Someone scans it with their iPhone or Android camera and a short form opens on *their* phone.
+- **They fill in the form**, tap Continue, then **Send by text**. A message to you with their details opens already filled in; they just hit Send. They can also save your contact card.
+- **Hand over**: if their camera isn't handy, hand them your phone. Their details are saved on your iPhone, and **Done** (top right) takes you back.
+- **Contacts**: everyone collected on your phone. Add them to iPhone Contacts one at a time or all at once, text them, or **Export** a spreadsheet (CSV).
+- **Profile**: your name, headline, mobile number and optional email.
 
-> **Why an NFC sticker instead of phone-to-phone?** Apple doesn't let websites or third-party apps send data from one iPhone to another by tapping. The only built-in option is NameDrop, which swaps contact cards and can't show a custom form. A ~$1 NFC sticker on your case gives the same "tap phones" experience, and it works with any iPhone XS or newer and with most Android phones.
+The QR generator is built into the file, so your code still shows when signal at an event is weak.
 
-## Setup (about 10 minutes)
+## Setup (about 5 minutes)
 
-1. **Host the page (free) with GitHub Pages**: in this repo go to **Settings → Pages → Source: Deploy from a branch** and pick the branch and `/ (root)`. Your link will be like `https://<username>.github.io/Contact-Request/`.
-2. **Open that link in Safari on your iPhone.** Tap Share → **Add to Home Screen**.
-3. **Open the dashboard** by tapping ⚙︎ in the top-right corner. Fill in your name, headline, mobile number (and optionally your email) and the hosted link. Tap **Save**. A QR code and your share link appear.
-4. **Make the tap sticker:** buy NTAG215 NFC stickers (Amazon, about $10 for 20). Install the free **NFC Tools** app, then go to *Write → Add a record → URL*, paste your share link, tap *Write* and hold the sticker near the top of your iPhone. Put the sticker on the back of your case.
-
-Now when someone taps the back of your phone with theirs, a notification pops up, they open it, fill in the form and send you their details by text.
+1. **Host the page for free with GitHub Pages**: in this repo go to **Settings → Pages → Source: Deploy from a branch**, then pick the branch and `/ (root)`. Your link will be like `https://<username>.github.io/Contact-Request/`.
+2. **Open that link in Safari on your iPhone**, then tap Share → **Add to Home Screen**.
+3. Fill in your profile and tap **Save**. Your QR code appears.
 
 ## Privacy
 
-- Contacts collected in hand-over mode are stored only in Safari on your iPhone (local storage). Back them up by exporting the CSV now and then. Clearing Safari's website data erases them.
-- Your name, number and email are in the share link (that's how the form knows where to send details). Only put in what you're happy to share with a new contact.
+- Contacts collected with Hand over are stored only in Safari on your iPhone (local storage). Back them up now and then with Export. Clearing Safari's website data erases them.
+- Your name, headline, number and email are part of the QR link (that's how the form knows where to send details). Only include what you're happy to share with a new contact.
+
+QR generation uses [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) by Kazuhiko Arase (MIT License), included inline.
