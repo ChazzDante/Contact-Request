@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Connect">
+<meta name="theme-color" content="#0f172a">
+<title>Let's Connect</title>
+<style>
+  :root {
+    --bg: #f5f6f8; --card: #ffffff; --text: #0f172a; --muted: #64748b;
+    --border: #e2e8f0; --accent: #2563eb; --accent-text: #ffffff;
+    --danger: #dc2626; --ok: #16a34a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0b1120; --card: #131c2e; --text: #e2e8f0; --muted: #94a3b8;
+      --border: #24324a; --accent: #3b82f6;
+    }
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); }
+  body {
+    font: 17px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    min-height: 100dvh;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+  }
+  main { max-width: 480px; margin: 0 auto; }
+  h1 { font-size: 28px; margin: 12px 0 4px; letter-spacing: -0.02em; }
+  h2 { font-size: 20px; margin: 24px 0 8px; }
+  p.sub { color: var(--muted); margin: 0 0 20px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+  label { display: block; font-size: 14px; font-weight: 600; color: var(--muted); margin: 14px 0 6px; }
+  label:first-child { margin-top: 0; }
+  input, textarea {
+    width: 100%; font: inherit; color: var(--text); background: var(--bg);
+    border: 1px solid var(--border); border-radius: 12px; padding: 13px 14px; outline: none;
+  }
+  input:focus, textarea:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 70px; }
+  button, .btn {
+    display: block; width: 100%; text-align: center; text-decoration: none;
+    font: inherit; font-weight: 600; border: 0; border-radius: 12px; padding: 14px;
+    margin-top: 12px; background: var(--accent); color: var(--accent-text); cursor: pointer;
+  }
+  button.secondary, .btn.secondary { background: transparent; color: var(--accent); border: 1px solid var(--border); }
+  button.danger { background: transparent; color: var(--danger); border: 1px solid var(--border); }
+  button.small { display: inline-block; width: auto; padding: 8px 12px; margin: 0 6px 0 0; font-size: 14px; }
+  .hidden { display: none !important; }
+  .center { text-align: center; }
+  .check { font-size: 56px; margin: 8px 0; }
+  .muted { color: var(--muted); font-size: 14px; }
+  .lead { border-top: 1px solid var(--border); padding: 12px 0; }
+  .lead:first-child { border-top: 0; }
+  .lead b { display: block; }
+  .lead .meta { color: var(--muted); font-size: 14px; word-break: break-word; }
+  .lead .actions { margin-top: 8px; }
+  #qr { display: flex; justify-content: center; padding: 16px; background: #fff; border-radius: 12px; }
+  #qr img, #qr canvas { max-width: 100%; height: auto; }
+  .url { font-size: 13px; word-break: break-all; color: var(--muted); margin-top: 8px; }
+  .gear {
+    position: fixed; top: max(10px, env(safe-area-inset-top)); right: 12px;
+    width: 40px; height: 40px; border-radius: 20px; padding: 0; margin: 0;
+    background: transparent; color: var(--muted); font-size: 22px; border: 0;
+  }
+  ol { padding-left: 20px; } ol li { margin: 6px 0; }
+  .toast {
+    position: fixed; left: 50%; bottom: max(24px, env(safe-area-inset-bottom)); transform: translateX(-50%);
+    background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-size: 15px;
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <!-- ============ CLIENT FORM ============ -->
+  <section id="formView">
+    <h1 id="title">Let's connect</h1>
+    <p class="sub" id="subtitle">Share your details and I'll be in touch.</p>
+    <form id="leadForm" class="card" autocomplete="on" novalidate>
+      <label for="name">Full name</label>
+      <input id="name" name="name" autocomplete="name" autocapitalize="words" required>
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false">
+      <label for="phone">Phone</label>
+      <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel">
+      <label for="company">Company <span class="muted">(optional)</span></label>
+      <input id="company" name="company" autocomplete="organization">
+      <label for="note">Note <span class="muted">(optional)</span></label>
+      <textarea id="note" name="note" placeholder="What are you working on?"></textarea>
+      <p id="formError" class="muted hidden" style="color:var(--danger)"></p>
+      <button type="submit" id="submitBtn">Submit</button>
+    </form>
+  </section>
+
+  <!-- ============ THANK YOU / SEND ============ -->
+  <section id="doneView" class="hidden center">
+    <div class="check">✅</div>
+    <h1>Thank you!</h1>
+    <p class="sub" id="doneMsg">Your details were saved.</p>
+    <div id="sendBox" class="hidden">
+      <p class="sub">Tap below to send your details — then just hit <b>Send</b>.</p>
+      <a id="sendSms" class="btn hidden">Send by text message</a>
+      <a id="sendEmail" class="btn secondary hidden">Send by email</a>
+    </div>
+    <a id="ownerCard" class="btn secondary hidden">Save my contact card</a>
+    <button class="secondary" id="againBtn">Done</button>
+  </section>
+
+  <!-- ============ OWNER DASHBOARD ============ -->
+  <section id="ownerView" class="hidden">
+    <h1>Your contacts</h1>
+    <p class="sub">Collected on this iPhone. Stored only on this device.</p>
+
+    <div class="card" id="leadList"></div>
+    <button id="exportVcf">Add all to Contacts (.vcf)</button>
+    <button class="secondary" id="exportCsv">Export spreadsheet (.csv)</button>
+
+    <h2>Share by tap or scan</h2>
+    <div class="card">
+      <div id="qr"></div>
+      <div class="url" id="shareUrl"></div>
+      <button class="secondary" id="copyUrl">Copy link</button>
+      <p class="muted" id="hostWarning"></p>
+      <p class="muted"><b>Tap to share (NFC):</b></p>
+      <ol class="muted">
+        <li>Get an NFC sticker or card (NTAG213/215/216).</li>
+        <li>Install the free <b>NFC Tools</b> app → Write → Add a record → URL → paste the link above → Write, and hold the sticker to the top of your iPhone.</li>
+        <li>Stick it on the back of your phone case. Anyone with a modern iPhone or Android taps it and this form opens — no app needed.</li>
+      </ol>
+    </div>
+
+    <h2>Your info</h2>
+    <form id="settingsForm" class="card">
+      <label for="sName">Your name</label>
+      <input id="sName" autocomplete="name">
+      <label for="sTitle">Headline</label>
+      <input id="sTitle" placeholder="e.g. Realtor · Acme Realty">
+      <label for="sPhone">Your mobile (clients' details are texted here)</label>
+      <input id="sPhone" type="tel" inputmode="tel" autocomplete="tel">
+      <label for="sEmail">Your email (optional backup)</label>
+      <input id="sEmail" type="email" inputmode="email" autocapitalize="off" autocomplete="email">
+      <label for="sBase">Link where this page is hosted</label>
+      <input id="sBase" type="url" inputmode="url" autocapitalize="off" placeholder="https://you.github.io/Contact-Request/">
+      <button type="submit">Save</button>
+    </form>
+
+    <button class="secondary" id="openKiosk">Hand my phone to someone (form mode)</button>
+    <button class="danger" id="clearAll">Delete all collected contacts</button>
+    <p class="muted center" style="margin-top:20px">Tip: In Safari tap Share → <b>Add to Home Screen</b> to use this like an app.</p>
+  </section>
+</main>
+
+<button class="gear" id="gear" aria-label="Owner dashboard">⚙︎</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const LEADS_KEY = 'cr_leads_v1';
+  const SETTINGS_KEY = 'cr_settings_v1';
+
+  // ---------- storage helpers (never throw) ----------
+  const load = (k, fallback) => { try { return JSON.parse(localStorage.getItem(k)) ?? fallback; } catch { return fallback; } };
+  const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+
+  // ---------- mode detection ----------
+  // If the page is opened with ?n=...&p=... it was shared (QR/NFC) and runs on the CLIENT's phone.
+  const params = new URLSearchParams(location.search);
+  const shared = {
+    name: params.get('n') || '', title: params.get('t') || '',
+    phone: params.get('p') || '', email: params.get('e') || ''
+  };
+  const isRemote = !!(shared.phone || shared.email);
+  let settings = load(SETTINGS_KEY, { name: '', title: '', phone: '', email: '', base: '' });
+  const owner = isRemote ? shared : settings;
+
+  // ---------- views ----------
+  const views = ['formView', 'doneView', 'ownerView'];
+  function show(id) {
+    views.forEach(v => $(v).classList.toggle('hidden', v !== id));
+    $('gear').classList.toggle('hidden', isRemote || id === 'ownerView');
+    window.scrollTo(0, 0);
+  }
+
+  function toast(msg) {
+    const t = document.createElement('div');
+    t.className = 'toast'; t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2200);
+  }
+
+  function applyBranding() {
+    if (owner.name) {
+      $('title').textContent = `Connect with ${owner.name.split(' ')[0]}`;
+      $('subtitle').textContent = owner.title
+        ? `${owner.name} · ${owner.title}. Share your details and I'll be in touch.`
+        : `Share your details and ${owner.name} will be in touch.`;
+    }
+  }
+
+  // ---------- vCard / CSV ----------
+  const vEsc = (s) => String(s || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/([,;])/g, '\\$1');
+  function vcard(c) {
+    const parts = (c.name || '').trim().split(/\s+/);
+    const last = parts.length > 1 ? parts.pop() : '';
+    const first = parts.join(' ');
+    const lines = ['BEGIN:VCARD', 'VERSION:3.0',
+      `N:${vEsc(last)};${vEsc(first)};;;`, `FN:${vEsc(c.name)}`];
+    if (c.company) lines.push(`ORG:${vEsc(c.company)}`);
+    if (c.title) lines.push(`TITLE:${vEsc(c.title)}`);
+    if (c.phone) lines.push(`TEL;TYPE=CELL:${vEsc(c.phone)}`);
+    if (c.email) lines.push(`EMAIL;TYPE=INTERNET:${vEsc(c.email)}`);
+    const note = [c.note, c.at ? `Met ${new Date(c.at).toLocaleDateString()}` : ''].filter(Boolean).join(' — ');
+    if (note) lines.push(`NOTE:${vEsc(note)}`);
+    lines.push('END:VCARD');
+    return lines.join('\r\n');
+  }
+  const csvCell = (s) => `"${String(s ?? '').replace(/"/g, '""')}"`;
+  function toCsv(list) {
+    const head = ['Name', 'Email', 'Phone', 'Company', 'Note', 'Collected'];
+    const rows = list.map(c => [c.name, c.email, c.phone, c.company, c.note, new Date(c.at).toLocaleString()]);
+    return [head, ...rows].map(r => r.map(csvCell).join(',')).join('\r\n');
+  }
+  function download(filename, text, type) {
+    const blob = new Blob([text], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }
+  const fileSafe = (s) => (s || 'contact').replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '_') || 'contact';
+
+  // ---------- client form ----------
+  $('leadForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const c = {
+      name: $('name').value.trim(), email: $('email').value.trim(), phone: $('phone').value.trim(),
+      company: $('company').value.trim(), note: $('note').value.trim(), at: Date.now()
+    };
+    const err = $('formError');
+    if (!c.name) { err.textContent = 'Please enter your name.'; err.classList.remove('hidden'); $('name').focus(); return; }
+    if (!c.email && !c.phone) { err.textContent = 'Please enter an email or phone number.'; err.classList.remove('hidden'); $('email').focus(); return; }
+    if (c.email && !/^\S+@\S+\.\S+$/.test(c.email)) { err.textContent = 'That email doesn\u2019t look right.'; err.classList.remove('hidden'); $('email').focus(); return; }
+    err.classList.add('hidden');
+
+    if (isRemote) {
+      // On the client's own phone: hand the details to Messages / Mail addressed to the owner.
+      const body = [`Hi${owner.name ? ' ' + owner.name.split(' ')[0] : ''}, here are my details:`,
+        c.name, c.email, c.phone, c.company, c.note].filter(Boolean).join('\n');
+      $('doneMsg').textContent = 'One last step:';
+      $('sendBox').classList.remove('hidden');
+      if (owner.phone) {
+        $('sendSms').href = `sms:${owner.phone.replace(/[^\d+]/g, '')}?&body=${encodeURIComponent(body)}`;
+        $('sendSms').classList.remove('hidden');
+      }
+      if (owner.email) {
+        $('sendEmail').href = `mailto:${encodeURIComponent(owner.email)}?subject=${encodeURIComponent('New contact: ' + c.name)}&body=${encodeURIComponent(body)}`;
+        $('sendEmail').classList.remove('hidden');
+        if (!owner.phone) $('sendEmail').classList.remove('secondary');
+      }
+      if (owner.name) {
+        $('ownerCard').textContent = `Save ${owner.name.split(' ')[0]}'s contact`;
+        $('ownerCard').classList.remove('hidden');
+      }
+    } else {
+      // Kiosk mode on the owner's phone: save locally.
+      const leads = load(LEADS_KEY, []);
+      leads.unshift(c);
+      save(LEADS_KEY, leads);
+      $('doneMsg').textContent = owner.name ? `${owner.name.split(' ')[0]} will be in touch soon.` : 'Your details were saved.';
+    }
+    $('leadForm').reset();
+    show('doneView');
+  });
+
+  $('ownerCard').addEventListener('click', (e) => {
+    e.preventDefault();
+    download(`${fileSafe(owner.name)}.vcf`, vcard(owner), 'text/vcard');
+  });
+  $('againBtn').addEventListener('click', () => { $('sendBox').classList.add('hidden'); show('formView'); });
+
+  // ---------- owner dashboard ----------
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+
+  function renderLeads() {
+    const leads = load(LEADS_KEY, []);
+    const box = $('leadList');
+    if (!leads.length) {
+      box.innerHTML = '<p class="muted center" style="margin:8px 0">No contacts yet. Tap “Hand my phone to someone” below, or share your link.</p>';
+    } else {
+      box.innerHTML = leads.map((c, i) => `
+        <div class="lead">
+          <b>${esc(c.name)}</b>
+          <div class="meta">${[c.email, c.phone, c.company].filter(Boolean).map(esc).join(' · ')}</div>
+          ${c.note ? `<div class="meta">“${esc(c.note)}”</div>` : ''}
+          <div class="meta">${esc(new Date(c.at).toLocaleString())}</div>
+          <div class="actions">
+            <button class="small" data-act="vcf" data-i="${i}">Add to Contacts</button>
+            ${c.phone ? `<a class="btn small secondary" style="display:inline-block;width:auto;padding:8px 12px;margin:0 6px 0 0;font-size:14px" href="sms:${esc(c.phone.replace(/[^\d+]/g, ''))}">Text</a>` : ''}
+            <button class="small danger" data-act="del" data-i="${i}">Delete</button>
+          </div>
+        </div>`).join('');
+    }
+    $('exportVcf').disabled = $('exportCsv').disabled = !leads.length;
+    $('exportVcf').style.opacity = $('exportCsv').style.opacity = leads.length ? 1 : 0.5;
+  }
+
+  $('leadList').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-act]');
+    if (!b) return;
+    const leads = load(LEADS_KEY, []);
+    const c = leads[+b.dataset.i];
+    if (!c) return;
+    if (b.dataset.act === 'vcf') download(`${fileSafe(c.name)}.vcf`, vcard(c), 'text/vcard');
+    if (b.dataset.act === 'del' && confirm(`Delete ${c.name}?`)) {
+      leads.splice(+b.dataset.i, 1); save(LEADS_KEY, leads); renderLeads();
+    }
+  });
+
+  $('exportVcf').addEventListener('click', () => {
+    const leads = load(LEADS_KEY, []);
+    if (leads.length) download('contacts.vcf', leads.map(vcard).join('\r\n'), 'text/vcard');
+  });
+  $('exportCsv').addEventListener('click', () => {
+    const leads = load(LEADS_KEY, []);
+    if (leads.length) download('contacts.csv', toCsv(leads), 'text/csv');
+  });
+  $('clearAll').addEventListener('click', () => {
+    if (confirm('Delete every collected contact from this iPhone? This cannot be undone.')) {
+      save(LEADS_KEY, []); renderLeads();
+    }
+  });
+
+  function shareLink() {
+    let base = (settings.base || '').trim();
+    if (!base && /^https?:/.test(location.protocol)) base = location.origin + location.pathname;
+    if (!base) return '';
+    const u = new URL(base);
+    const q = { n: settings.name, t: settings.title, p: settings.phone, e: settings.email };
+    Object.entries(q).forEach(([k, v]) => v ? u.searchParams.set(k, v) : u.searchParams.delete(k));
+    return u.toString();
+  }
+
+  function renderShare() {
+    const link = (() => { try { return shareLink(); } catch { return ''; } })();
+    const qr = $('qr');
+    qr.innerHTML = '';
+    $('shareUrl').textContent = link || '';
+    const warn = [];
+    if (!settings.phone && !settings.email) warn.push('Add your mobile number or email below so clients can send you their details.');
+    if (!link) warn.push('Add the link where this page is hosted below (see README) to get a shareable QR code.');
+    $('hostWarning').textContent = warn.join(' ');
+    $('copyUrl').classList.toggle('hidden', !link);
+    if (!link) { qr.classList.add('hidden'); return; }
+    qr.classList.remove('hidden');
+    if (window.QRCode) {
+      new QRCode(qr, { text: link, width: 240, height: 240, correctLevel: QRCode.CorrectLevel.M });
+    } else {
+      qr.innerHTML = '<p style="color:#334155;margin:0">QR code needs an internet connection.</p>';
+    }
+  }
+
+  $('copyUrl').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(shareLink()); toast('Link copied'); }
+    catch { toast('Press and hold the link to copy'); }
+  });
+
+  function fillSettings() {
+    $('sName').value = settings.name || ''; $('sTitle').value = settings.title || '';
+    $('sPhone').value = settings.phone || ''; $('sEmail').value = settings.email || '';
+    $('sBase').value = settings.base || '';
+  }
+  $('settingsForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    settings = {
+      name: $('sName').value.trim(), title: $('sTitle').value.trim(),
+      phone: $('sPhone').value.trim(), email: $('sEmail').value.trim(), base: $('sBase').value.trim()
+    };
+    if (settings.base) { try { new URL(settings.base); } catch { toast('That link isn\u2019t a valid URL'); return; } }
+    save(SETTINGS_KEY, settings);
+    Object.assign(owner, settings);
+    applyBranding(); renderShare(); toast('Saved');
+  });
+
+  function openOwner() { fillSettings(); renderLeads(); renderShare(); show('ownerView'); }
+  $('gear').addEventListener('click', openOwner);
+  $('openKiosk').addEventListener('click', () => { history.replaceState(null, '', location.pathname); show('formView'); });
+
+  // ---------- start ----------
+  applyBranding();
+  if (!isRemote && location.hash === '#owner') openOwner(); else show('formView');
+})();
+</script>
+</body>
+</html>
